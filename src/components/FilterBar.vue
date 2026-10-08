@@ -1,28 +1,44 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import type { TicketFilterDto, TicketPriority, TicketStatus } from '../models/Ticket'
 
-const props = defineProps<{ modelValue: { title: string; status: string; priority: string } }>()
-const emit = defineEmits<{ 'update:modelValue': [value: { title: string; status: string; priority: string }] }>()
+const props = defineProps<{
+  modelValue: TicketFilterDto
+}>()
 
-const searchInput = ref(props.modelValue.title)
-const status = ref(props.modelValue.status)
-const priority = ref(props.modelValue.priority)
+const emit = defineEmits<{
+  'update:modelValue': [value: TicketFilterDto]
+}>()
+
+const searchInput = ref(props.modelValue.title || '')
+const status = ref<TicketStatus | ''>(props.modelValue.status || '')
+const priority = ref<TicketPriority | ''>(props.modelValue.priority || '')
 
 let debounceTimer: ReturnType<typeof setTimeout> | undefined
 
-// Sync when parent updates modelValue (e.g. external reset)
-watch(() => props.modelValue, (newVal) => {
-  searchInput.value = newVal.title
-  status.value = newVal.status
-  priority.value = newVal.priority
-}, { deep: true })
+// Synchronisation quand le parent modifie modelValue (ex: réinitialisation externe)
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal.title !== searchInput.value) searchInput.value = newVal.title || ''
+    if (newVal.status !== status.value) status.value = newVal.status || ''
+    if (newVal.priority !== priority.value) priority.value = newVal.priority || ''
+  },
+  { deep: true },
+)
+
+const hasActiveFilters = computed(() => {
+  return Boolean(searchInput.value || status.value || priority.value)
+})
 
 function applySearch() {
   if (debounceTimer) clearTimeout(debounceTimer)
   emit('update:modelValue', {
+    ...props.modelValue,
     title: searchInput.value.trim(),
     status: status.value,
     priority: priority.value,
+    page: 1,
   })
 }
 
@@ -30,7 +46,7 @@ function onInput() {
   if (debounceTimer) clearTimeout(debounceTimer)
   debounceTimer = setTimeout(() => {
     applySearch()
-  }, 400)
+  }, 300)
 }
 
 function onSelectChange() {
@@ -46,43 +62,65 @@ function reset() {
     title: '',
     status: '',
     priority: '',
+    page: 1,
   })
 }
 </script>
 
 <template>
-  <form class="filter-bar" @submit.prevent="applySearch">
+  <form class="filter-bar" @submit.prevent="applySearch" role="search" aria-label="Filtres des tickets">
     <div class="search-field">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon" aria-hidden="true">🔍</span>
       <input
         v-model="searchInput"
         type="search"
-        placeholder="Rechercher un ticket..."
-        aria-label="Rechercher un ticket"
+        placeholder="Rechercher par mot-clé (titre)..."
+        aria-label="Rechercher un ticket par titre"
         @input="onInput"
         @keydown.enter.prevent="applySearch"
       />
       <button
         type="submit"
         class="button button-primary button-small search-button"
-        title="Rechercher"
+        title="Lancer la recherche"
         aria-label="Rechercher"
       >
         Rechercher
       </button>
     </div>
-    <select v-model="status" aria-label="Filtrer par statut" @change="onSelectChange">
-      <option value="">Tous les statuts</option>
-      <option value="open">Ouverts</option>
-      <option value="in_progress">En cours</option>
-      <option value="resolved">Résolus</option>
-    </select>
-    <select v-model="priority" aria-label="Filtrer par priorité" @change="onSelectChange">
-      <option value="">Toutes les priorités</option>
-      <option value="high">Haute</option>
-      <option value="medium">Moyenne</option>
-      <option value="low">Faible</option>
-    </select>
-    <button type="button" class="button button-ghost" @click="reset">Réinitialiser</button>
+
+    <div class="filter-selects">
+      <select
+        v-model="status"
+        aria-label="Filtrer par statut"
+        @change="onSelectChange"
+      >
+        <option value="">Tous les statuts</option>
+        <option value="open">Ouvert</option>
+        <option value="in_progress">En cours</option>
+        <option value="resolved">Résolu</option>
+      </select>
+
+      <select
+        v-model="priority"
+        aria-label="Filtrer par priorité"
+        @change="onSelectChange"
+      >
+        <option value="">Toutes les priorités</option>
+        <option value="high">Haute</option>
+        <option value="medium">Moyenne</option>
+        <option value="low">Faible</option>
+      </select>
+
+      <button
+        v-show="hasActiveFilters"
+        type="button"
+        class="button button-ghost reset-button"
+        title="Effacer les filtres"
+        @click="reset"
+      >
+        ✕ Réinitialiser
+      </button>
+    </div>
   </form>
 </template>
