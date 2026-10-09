@@ -62,14 +62,15 @@ onMounted(() => {
 
 <template>
   <div class="dashboard-container">
-    <section class="page-heading">
+    <section class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
       <div>
-        <p class="eyebrow">Suivi des anomalies</p>
-        <h1>Tableau de bord</h1>
-        <p class="muted">Visualisez, filtrez et gérez les anomalies de votre projet en temps réel.</p>
+        <p class="text-uppercase tracking-wide text-primary fw-bold small mb-1">Suivi des anomalies</p>
+        <h1 class="h2 fw-bold mb-1">Tableau de bord</h1>
+        <p class="text-secondary mb-0">Visualisez, filtrez et gérez les anomalies de votre projet en temps réel.</p>
       </div>
-      <RouterLink class="button button-primary" to="/tickets/new">
-        + Créer un ticket
+      <RouterLink class="btn btn-primary d-inline-flex align-items-center gap-1 shadow-sm" to="/tickets/new">
+        <i class="bi bi-plus-lg"></i>
+        <span>Créer un ticket</span>
       </RouterLink>
     </section>
 
@@ -77,36 +78,42 @@ onMounted(() => {
     <FilterBar :model-value="filters" @update:model-value="onFiltersChange" />
 
     <!-- Message d'erreur -->
-    <div v-if="error" class="alert alert-error" role="alert">
+    <div v-if="error" class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
       <span>{{ error }}</span>
-      <button type="button" class="button button-ghost button-small" @click="loadTickets">
+      <button type="button" class="btn btn-outline-danger btn-sm" @click="loadTickets">
         Réessayer
       </button>
     </div>
 
     <!-- État de chargement -->
-    <div v-if="loading" class="empty-state">
-      <span class="loader" aria-hidden="true"></span>
-      <p>Chargement des tickets...</p>
+    <div v-if="loading" class="text-center py-5">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="text-secondary mb-0">Chargement des tickets...</p>
     </div>
 
     <!-- Grille de tickets -->
-    <div v-else-if="tickets.length > 0" class="ticket-grid">
-      <TicketCard
+    <div v-else-if="tickets.length > 0" class="row g-3">
+      <div
         v-for="ticket in tickets"
         :key="ticket.id"
-        :ticket="ticket"
-      />
+        class="col-12 col-md-6 col-lg-4"
+      >
+        <TicketCard :ticket="ticket" />
+      </div>
     </div>
 
     <!-- État vide -->
-    <div v-else class="empty-state">
-      <span class="empty-icon" aria-hidden="true">📋</span>
-      <strong>Aucun ticket trouvé</strong>
-      <span>Modifiez vos filtres de recherche ou créez un nouveau ticket.</span>
-      <RouterLink class="button button-primary button-small" to="/tickets/new">
-        Créer un ticket
-      </RouterLink>
+    <div v-else class="card border-dashed text-center py-5 my-4 bg-body">
+      <div class="card-body">
+        <div class="fs-1 text-secondary mb-2">📋</div>
+        <h5 class="fw-bold mb-2">Aucun ticket trouvé</h5>
+        <p class="text-secondary mb-3">Modifiez vos filtres de recherche ou créez un nouveau ticket.</p>
+        <RouterLink class="btn btn-primary btn-sm" to="/tickets/new">
+          Créer un ticket
+        </RouterLink>
+      </div>
     </div>
 
     <!-- Pagination réutilisable connectée à l'API -->

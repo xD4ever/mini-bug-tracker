@@ -79,116 +79,132 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="detail-page">
-    <RouterLink class="back-link" to="/">
-      ← Retour au tableau de bord
-    </RouterLink>
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+      <RouterLink class="btn btn-link text-decoration-none p-0 mb-3 d-inline-flex align-items-center gap-1 text-secondary" to="/">
+        <i class="bi bi-arrow-left"></i>
+        <span>Retour au tableau de bord</span>
+      </RouterLink>
 
-    <!-- Message d'erreur -->
-    <div v-if="error" class="alert alert-error" role="alert">
-      <span>{{ error }}</span>
-      <button type="button" class="button button-ghost button-small" @click="loadTicket">
-        Réessayer
-      </button>
-    </div>
-
-    <!-- État de chargement -->
-    <div v-if="loading" class="empty-state">
-      <span class="loader" aria-hidden="true"></span>
-      <p>Chargement du ticket...</p>
-    </div>
-
-    <!-- Vue détaillée du ticket -->
-    <template v-else-if="ticket">
-      <div class="detail-header">
-        <div class="detail-header-info">
-          <div class="detail-tags">
-            <span class="ticket-id">#{{ ticket.id }}</span>
-            <PriorityBadge :priority="ticket.priority" :label="ticket.priorityLabel" />
-            <StatusBadge :status="ticket.status" :label="ticket.statusLabel" />
-          </div>
-          <h1>{{ ticket.title }}</h1>
-        </div>
-        <button
-          type="button"
-          class="button button-danger"
-          :disabled="deleting"
-          @click="promptDelete"
-        >
-          🗑️ Supprimer le ticket
+      <!-- Message d'erreur -->
+      <div v-if="error" class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
+        <span>{{ error }}</span>
+        <button type="button" class="btn btn-outline-danger btn-sm" @click="loadTicket">
+          Réessayer
         </button>
       </div>
 
-      <div class="detail-layout">
-        <!-- Contenu principal -->
-        <article class="detail-card">
-          <h2 class="section-title">Description de l'anomalie</h2>
-          <div class="description-box">
-            <p class="description">{{ ticket.description }}</p>
-          </div>
-
-          <dl class="ticket-metadata">
-            <div class="meta-item">
-              <dt>Créé le</dt>
-              <dd>{{ ticket.formattedCreatedAt }}</dd>
-            </div>
-            <div class="meta-item">
-              <dt>Dernière modification</dt>
-              <dd>{{ ticket.formattedUpdatedAt }}</dd>
-            </div>
-          </dl>
-        </article>
-
-        <!-- Panneau de contrôle des propriétés -->
-        <aside class="detail-card controls">
-          <h2 class="section-title">Propriétés</h2>
-
-          <div class="control-group">
-            <label for="detail-status">Statut actuel</label>
-            <select
-              id="detail-status"
-              :value="ticket.status"
-              :disabled="saving"
-              @change="handleUpdateField('status', ($event.target as HTMLSelectElement).value as TicketStatus)"
-            >
-              <option value="open">Ouvert</option>
-              <option value="in_progress">En cours</option>
-              <option value="resolved">Résolu</option>
-            </select>
-          </div>
-
-          <div class="control-group">
-            <label for="detail-priority">Niveau de priorité</label>
-            <select
-              id="detail-priority"
-              :value="ticket.priority"
-              :disabled="saving"
-              @change="handleUpdateField('priority', ($event.target as HTMLSelectElement).value as TicketPriority)"
-            >
-              <option value="low">Faible</option>
-              <option value="medium">Moyenne</option>
-              <option value="high">Haute</option>
-            </select>
-          </div>
-
-          <div v-if="saving" class="saving-indicator">
-            <span class="loader small-loader" aria-hidden="true"></span>
-            <span>Mise à jour en cours...</span>
-          </div>
-        </aside>
+      <!-- État de chargement -->
+      <div v-if="loading" class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p class="text-secondary mb-0">Chargement du ticket...</p>
       </div>
 
-      <!-- Dialogue modal de confirmation de suppression -->
-      <ConfirmModal
-        :show="showDeleteModal"
-        title="Supprimer définitivement ce ticket ?"
-        :message="`Êtes-vous sûr de vouloir supprimer le ticket #${ticket.id} (${ticket.title}) ? Cette action est irréversible.`"
-        confirm-text="Oui, supprimer"
-        cancel-text="Annuler"
-        :danger="true"
-        @confirm="confirmDelete"
-        @cancel="showDeleteModal = false"
-      />
-    </template>
-  </section>
+      <!-- Vue détaillée du ticket -->
+      <template v-else-if="ticket">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="badge bg-secondary-subtle text-secondary fw-semibold">#{{ ticket.id }}</span>
+              <PriorityBadge :priority="ticket.priority" :label="ticket.priorityLabel" />
+              <StatusBadge :status="ticket.status" :label="ticket.statusLabel" />
+            </div>
+            <h1 class="h2 fw-bold mb-0">{{ ticket.title }}</h1>
+          </div>
+          <button
+            type="button"
+            class="btn btn-outline-danger d-inline-flex align-items-center gap-2"
+            :disabled="deleting"
+            @click="promptDelete"
+          >
+            <i class="bi bi-trash"></i>
+            <span>Supprimer le ticket</span>
+          </button>
+        </div>
+
+        <div class="row g-4">
+          <!-- Contenu principal -->
+          <div class="col-12 col-lg-8">
+            <div class="card shadow-sm border h-100">
+              <div class="card-body p-4">
+                <h2 class="h5 fw-bold mb-3">Description de l'anomalie</h2>
+                <div class="p-3 bg-body-tertiary rounded mb-4 text-break" style="white-space: pre-wrap; font-family: inherit; line-height: 1.6;">
+                  {{ ticket.description }}
+                </div>
+
+                <div class="row g-3 pt-3 border-top">
+                  <div class="col-12 col-sm-6">
+                    <span class="text-secondary small d-block">Créé le</span>
+                    <span class="fw-medium">{{ ticket.formattedCreatedAt }}</span>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <span class="text-secondary small d-block">Dernière modification</span>
+                    <span class="fw-medium">{{ ticket.formattedUpdatedAt }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panneau de contrôle des propriétés -->
+          <div class="col-12 col-lg-4">
+            <div class="card shadow-sm border">
+              <div class="card-body p-4">
+                <h2 class="h5 fw-bold mb-3">Propriétés</h2>
+
+                <div class="mb-3">
+                  <label for="detail-status" class="form-label fw-semibold">Statut actuel</label>
+                  <select
+                    id="detail-status"
+                    class="form-select"
+                    :value="ticket.status"
+                    :disabled="saving"
+                    @change="handleUpdateField('status', ($event.target as HTMLSelectElement).value as TicketStatus)"
+                  >
+                    <option value="open">Ouvert</option>
+                    <option value="in_progress">En cours</option>
+                    <option value="resolved">Résolu</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="detail-priority" class="form-label fw-semibold">Niveau de priorité</label>
+                  <select
+                    id="detail-priority"
+                    class="form-select"
+                    :value="ticket.priority"
+                    :disabled="saving"
+                    @change="handleUpdateField('priority', ($event.target as HTMLSelectElement).value as TicketPriority)"
+                  >
+                    <option value="low">Faible</option>
+                    <option value="medium">Moyenne</option>
+                    <option value="high">Haute</option>
+                  </select>
+                </div>
+
+                <div v-if="saving" class="alert alert-info py-2 px-3 small d-flex align-items-center gap-2 mb-0 mt-3" role="status">
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  <span>Mise à jour en cours...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dialogue modal de confirmation de suppression -->
+        <ConfirmModal
+          :show="showDeleteModal"
+          title="Supprimer définitivement ce ticket ?"
+          :message="`Êtes-vous sûr de vouloir supprimer le ticket #${ticket.id} (${ticket.title}) ? Cette action est irréversible.`"
+          confirm-text="Oui, supprimer"
+          cancel-text="Annuler"
+          :danger="true"
+          @confirm="confirmDelete"
+          @cancel="showDeleteModal = false"
+        />
+      </template>
+    </div>
+  </div>
 </template>

@@ -1,6 +1,6 @@
 # BugBoard — Mini Bug Tracker
 
-> Application web moderne de gestion et suivi d'anomalies (bug tracker) développée avec **Vue 3 (Composition API / `<script setup>`)**, **TypeScript**, **Vite** et **Vue Router**.
+> Application web moderne de gestion et suivi d'anomalies (bug tracker) développée avec **Vue 3 (Composition API / `<script setup>`)**, **TypeScript**, **Bootstrap 5**, **Vite** et **Vue Router**.
 
 ---
 

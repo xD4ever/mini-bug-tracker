@@ -16,8 +16,10 @@ function applyTheme(dark: boolean) {
   if (typeof document === 'undefined') return
   if (dark) {
     document.documentElement.classList.add('dark')
+    document.documentElement.setAttribute('data-bs-theme', 'dark')
   } else {
     document.documentElement.classList.remove('dark')
+    document.documentElement.setAttribute('data-bs-theme', 'light')
   }
 }
 

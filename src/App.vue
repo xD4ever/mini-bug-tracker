@@ -4,9 +4,9 @@ import ToastNotification from './components/ToastNotification.vue'
 </script>
 
 <template>
-  <div class="app-layout">
+  <div class="d-flex flex-column min-vh-100 bg-body-tertiary">
     <AppHeader />
-    <main class="page-shell">
+    <main class="container py-4 flex-grow-1">
       <RouterView />
     </main>
     <ToastNotification />

@@ -68,59 +68,78 @@ function reset() {
 </script>
 
 <template>
-  <form class="filter-bar" @submit.prevent="applySearch" role="search" aria-label="Filtres des tickets">
-    <div class="search-field">
-      <span class="search-icon" aria-hidden="true">🔍</span>
-      <input
-        v-model="searchInput"
-        type="search"
-        placeholder="Rechercher par mot-clé (titre)..."
-        aria-label="Rechercher un ticket par titre"
-        @input="onInput"
-        @keydown.enter.prevent="applySearch"
-      />
-      <button
-        type="submit"
-        class="button button-primary button-small search-button"
-        title="Lancer la recherche"
-        aria-label="Rechercher"
-      >
-        Rechercher
-      </button>
-    </div>
+  <form class="card border shadow-sm mb-4" @submit.prevent="applySearch" role="search" aria-label="Filtres des tickets">
+    <div class="card-body">
+      <div class="row g-2 align-items-center">
+        <!-- Champ de recherche -->
+        <div class="col-12 col-md-5 col-lg-6">
+          <div class="input-group">
+            <span class="input-group-text bg-body-secondary border-end-0">
+              <i class="bi bi-search text-secondary"></i>
+            </span>
+            <input
+              v-model="searchInput"
+              type="search"
+              class="form-control border-start-0"
+              placeholder="Rechercher par mot-clé (titre)..."
+              aria-label="Rechercher un ticket par titre"
+              @input="onInput"
+              @keydown.enter.prevent="applySearch"
+            />
+            <button
+              type="submit"
+              class="btn btn-primary d-none d-sm-inline-block"
+              title="Lancer la recherche"
+              aria-label="Rechercher"
+            >
+              Rechercher
+            </button>
+          </div>
+        </div>
 
-    <div class="filter-selects">
-      <select
-        v-model="status"
-        aria-label="Filtrer par statut"
-        @change="onSelectChange"
-      >
-        <option value="">Tous les statuts</option>
-        <option value="open">Ouvert</option>
-        <option value="in_progress">En cours</option>
-        <option value="resolved">Résolu</option>
-      </select>
+        <!-- Filtre statut -->
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <select
+            v-model="status"
+            class="form-select"
+            aria-label="Filtrer par statut"
+            @change="onSelectChange"
+          >
+            <option value="">Tous les statuts</option>
+            <option value="open">Ouvert</option>
+            <option value="in_progress">En cours</option>
+            <option value="resolved">Résolu</option>
+          </select>
+        </div>
 
-      <select
-        v-model="priority"
-        aria-label="Filtrer par priorité"
-        @change="onSelectChange"
-      >
-        <option value="">Toutes les priorités</option>
-        <option value="high">Haute</option>
-        <option value="medium">Moyenne</option>
-        <option value="low">Faible</option>
-      </select>
+        <!-- Filtre priorité -->
+        <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+          <select
+            v-model="priority"
+            class="form-select"
+            aria-label="Filtrer par priorité"
+            @change="onSelectChange"
+          >
+            <option value="">Toutes les priorités</option>
+            <option value="high">Haute</option>
+            <option value="medium">Moyenne</option>
+            <option value="low">Faible</option>
+          </select>
+        </div>
 
-      <button
-        v-show="hasActiveFilters"
-        type="button"
-        class="button button-ghost reset-button"
-        title="Effacer les filtres"
-        @click="reset"
-      >
-        ✕ Réinitialiser
-      </button>
+        <!-- Bouton réinitialiser -->
+        <div v-show="hasActiveFilters" class="col-12 col-lg-1 text-lg-end">
+          <button
+            type="button"
+            class="btn btn-outline-secondary w-100 d-inline-flex align-items-center justify-content-center gap-1"
+            title="Effacer les filtres"
+            @click="reset"
+          >
+            <i class="bi bi-x-lg"></i>
+            <span class="d-lg-none">Effacer</span>
+          </button>
+        </div>
+      </div>
     </div>
   </form>
 </template>

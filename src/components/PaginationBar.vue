@@ -47,69 +47,81 @@ const pageNumbers = computed(() => {
 </script>
 
 <template>
-  <nav v-if="totalPages > 1" class="pagination-wrapper" aria-label="Pagination des tickets">
-    <div class="pagination-info" v-if="totalItems !== undefined && totalItems > 0">
-      <span>Page <strong>{{ currentPage }}</strong> sur <strong>{{ totalPages }}</strong> ({{ totalItems }} ticket{{ totalItems > 1 ? 's' : '' }})</span>
+  <nav v-if="totalPages > 1" class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-4" aria-label="Pagination des tickets">
+    <div class="text-secondary small" v-if="totalItems !== undefined && totalItems > 0">
+      <span>Page <strong class="text-body-emphasis">{{ currentPage }}</strong> sur <strong class="text-body-emphasis">{{ totalPages }}</strong> ({{ totalItems }} ticket{{ totalItems > 1 ? 's' : '' }})</span>
     </div>
 
-    <div class="pagination">
-      <button
-        type="button"
-        class="button button-ghost button-small"
-        :disabled="currentPage === 1"
-        aria-label="Première page"
-        title="Première page"
-        @click="goTo(1)"
-      >
-        «
-      </button>
+    <ul class="pagination pagination-sm mb-0">
+      <li class="page-item" :class="{ disabled: currentPage === 1 }">
+        <button
+          type="button"
+          class="page-link"
+          :disabled="currentPage === 1"
+          aria-label="Première page"
+          title="Première page"
+          @click="goTo(1)"
+        >
+          «
+        </button>
+      </li>
 
-      <button
-        type="button"
-        class="button button-ghost"
-        :disabled="currentPage === 1"
-        aria-label="Page précédente"
-        @click="goTo(currentPage - 1)"
-      >
-        ← Précédent
-      </button>
+      <li class="page-item" :class="{ disabled: currentPage === 1 }">
+        <button
+          type="button"
+          class="page-link"
+          :disabled="currentPage === 1"
+          aria-label="Page précédente"
+          @click="goTo(currentPage - 1)"
+        >
+          Précédent
+        </button>
+      </li>
 
-      <div class="pagination-numbers">
-        <template v-for="(p, index) in pageNumbers" :key="index">
-          <span v-if="p === '...'" class="pagination-ellipsis">…</span>
+      <template v-for="(p, index) in pageNumbers" :key="index">
+        <li v-if="p === '...'" class="page-item disabled">
+          <span class="page-link">…</span>
+        </li>
+        <li
+          v-else
+          class="page-item"
+          :class="{ active: p === currentPage }"
+        >
           <button
-            v-else
             type="button"
-            class="button button-page"
-            :class="{ active: p === currentPage }"
+            class="page-link"
             :aria-current="p === currentPage ? 'page' : undefined"
             @click="goTo(Number(p))"
           >
             {{ p }}
           </button>
-        </template>
-      </div>
+        </li>
+      </template>
 
-      <button
-        type="button"
-        class="button button-ghost"
-        :disabled="currentPage === totalPages"
-        aria-label="Page suivante"
-        @click="goTo(currentPage + 1)"
-      >
-        Suivant →
-      </button>
+      <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+        <button
+          type="button"
+          class="page-link"
+          :disabled="currentPage === totalPages"
+          aria-label="Page suivante"
+          @click="goTo(currentPage + 1)"
+        >
+          Suivant
+        </button>
+      </li>
 
-      <button
-        type="button"
-        class="button button-ghost button-small"
-        :disabled="currentPage === totalPages"
-        aria-label="Dernière page"
-        title="Dernière page"
-        @click="goTo(totalPages)"
-      >
-        »
-      </button>
-    </div>
+      <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+        <button
+          type="button"
+          class="page-link"
+          :disabled="currentPage === totalPages"
+          aria-label="Dernière page"
+          title="Dernière page"
+          @click="goTo(totalPages)"
+        >
+          »
+        </button>
+      </li>
+    </ul>
   </nav>
 </template>
