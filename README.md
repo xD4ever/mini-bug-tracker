@@ -139,6 +139,34 @@ npm run type-check
 
 ---
 
+## 🐳 Déploiement & Docker
+
+### Image de l'API & Base de données (TP)
+L'image Docker officielle du backend API / base de données pour le TP est disponible sur Docker Hub :
+- Image : `nicolascauchois/fisa3-techno-web-api-tp:latest` (ou `1.0.0`)
+- Port exposé : `8000`
+
+### Démarrage avec Docker Compose (Recommandé)
+Lancez simultanément l'API backend et l'application frontend Nginx :
+```sh
+docker compose up --build -d
+```
+- **Frontend** accessible sur : `http://localhost` (port 80)
+- **API** accessible sur : `http://localhost:8000`
+
+### Lancer uniquement l'API / Base de données
+```sh
+docker run -d --name bugboard-api -p 8000:8000 nicolascauchois/fisa3-techno-web-api-tp:latest
+```
+
+### Construire et lancer le Frontend seul
+```sh
+docker build -t minibug-tracker-frontend .
+docker run -d --name bugboard-frontend -p 80:80 minibug-tracker-frontend
+```
+
+---
+
 ## ⚙️ Variables d'Environnement
 
 Pour pointer vers une URL d'API spécifique (ex. backend Symfony/API Platform ou Mock Server) :

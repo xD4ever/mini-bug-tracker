@@ -1,0 +1,20 @@
+services:
+  # Backend API & Base de données (Image Docker du TP)
+  api:
+    image: nicolascauchois/fisa3-techno-web-api-tp:latest
+    container_name: bugboard-api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  # Application Frontend Vue.js (Nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bugboard-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
